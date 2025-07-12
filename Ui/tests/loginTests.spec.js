@@ -11,6 +11,33 @@ test('Given_ValidLoginCredentials_When_LoginIsClicked_Then_LoginSuccessful', asy
   await expect(page.locator('.title')).toHaveText('Products');
 });
 
+test('Given_InalidLoginCredentials_When_LoginIsClicked_Then_LoginUnsucessfulWithCorrectError', async ({ page }) => {
+  // Using the login utility function to perform the login action
+  await login(page, 'standard_user', 'secret_sauce_invalid');
+
+ // Expecting the error message to be displayed
+  await expect(page.locator('[data-test="error"]')).toBeVisible();
+  await expect(page.locator('[data-test="error"]')).toContainText('Epic sadface: Username and password do not match any user in this service');
+});
+
+test('Given_UsernameWithoutPassword_When_LoginIsClicked_Then_LoginSuccessful', async ({ page }) => {
+  // Using the login utility function to perform the login action
+  await login(page, 'standard_user', '');
+
+ // Expecting the error message to be displayed
+  await expect(page.locator('[data-test="error"]')).toBeVisible();
+  await expect(page.locator('[data-test="error"]')).toContainText('Epic sadface: Password is required');
+});
+
+test('Given_EmptyCredentials_When_LoginIsClicked_Then_CorrectErrorIsReturned', async ({ page }) => {
+  // Using the login utility function to perform the login action
+  await login(page, '', '');
+
+ // Expecting the error message to be displayed
+  await expect(page.locator('[data-test="error"]')).toBeVisible();
+  await expect(page.locator('[data-test="error"]')).toContainText('Epic sadface: Username is required');
+});
+
 test('Given_LockedOutUserCredentials_When_LoginIsClicked_Then_LoginUnsucessfulWithCorrectError', async ({ page }) => {
   // Using the login utility function to perform the login action
   await login(page, 'locked_out_user', 'secret_sauce');
@@ -28,4 +55,14 @@ test('Given_PerformanceGlitchUserCredentials_When_LoginIsClicked_Then_LoginSucce
   await expect(page).toHaveURL('https://www.saucedemo.com/inventory.html');
   // Expecting the title of the page to be 'Products'
   await expect(page.locator('.title')).toHaveText('Products');
+});
+
+test('Given_AttemptToAccessInventoryPage_When_NotLoggedIn_Then_LoginPageIsDisplayedWithCorrectError', async ({ page }) => {
+  await page.goto('https://www.saucedemo.com/inventory.html');
+
+  // Expecting the page to navigate to the products page
+  await expect(page).toHaveURL('https://www.saucedemo.com');
+   // Expecting the error message to be displayed
+  await expect(page.locator('[data-test="error"]')).toBeVisible();
+  await expect(page.locator('[data-test="error"]')).toContainText('Epic sadface: You can only access \'/inventory.html\' when you are logged in.');
 });
