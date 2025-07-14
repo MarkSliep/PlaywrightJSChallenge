@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { login } from '../helpers/loginPageUtil.js';
+import { login } from '../../utilities/ui-utilities/loginPageUtil.js';
 
 test('Given_ValidLoginCredentials_When_LoginIsClicked_Then_LoginSuccessful', async ({ page }) => {
   // Using the login utility function to perform the login action
